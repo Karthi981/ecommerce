@@ -1,5 +1,6 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 
@@ -17,9 +18,10 @@ class Cart extends StatefulWidget {
 }
 
 class _CartState extends State<Cart> {
+  final String uid = FirebaseAuth.instance.currentUser!.uid;
+  List<Map<String,dynamic>> items =[];
 
 
-   List<String> CartId = [];
   // Future<List<Carts>> readcart()async{
   //   var snapshot = await FirebaseFirestore.instance.collection('cart').get();
   //   var cart = snapshot.docs.map((e) => Carts.fromSnapshot(e)).toList();
@@ -27,14 +29,16 @@ class _CartState extends State<Cart> {
   //   return cart;
   // }
   Future getCartId() async {
-     await FirebaseFirestore.instance.collection('cart').get().then(
-            (snapshot) => snapshot.docs.forEach((document) {
-              print(document.reference.id);
-              CartId.add(document.reference.id);
-            }));
+    List<Map<String,dynamic>> tempList =[];
+     var data =await FirebaseFirestore.instance.collection('users').doc(uid).collection('cart').get();
+     data.docs.forEach((element) {
+       tempList.add(element.data());
+     });
+     setState(() {
+       items=tempList;
+     });
   }
 
-  CollectionReference cartpoducts =FirebaseFirestore.instance.collection('cart');
 
   @override
   void initState() {
@@ -83,29 +87,45 @@ class _CartState extends State<Cart> {
         body: FutureBuilder(
           future: getCartId(),
           builder: (context,snapshot) {
-           if(snapshot.hasData){
+           if(items.length>0){
              return ListView.builder(
-                 itemCount: CartId.length,
+                 itemCount: items.length,
                  itemBuilder: (context,index) {
-                   return FutureBuilder(
-                     future: cartpoducts.doc('${CartId[index]}').get(),
-                     builder: (context, snapshot) {
-                       if (snapshot.connectionState == ConnectionState.done) {
-                         Map<String, dynamic>data =
-                         snapshot.data!.data() as Map<String, dynamic>;
-                         return
-                           ListTile(
-                             title: Text(data['title']),
-                           );
-                       }
-                       return Text('Loading');
-                     },
+                   return Padding(
+                     padding: const EdgeInsets.all(8.0),
+                     child: Container(
+                       height: 80,
+                       child: ListTile(
+                         title: Text(items[index]['title']),
+                         leading: Container(
+                           height: 50,
+                           width: 50,
+                           decoration: BoxDecoration(
+                             shape: BoxShape.rectangle,
+                             image: DecorationImage(image: NetworkImage(items[index]['image']))
+                           ),
+                         ),
+                         // leading: Text(items[index]['image'].toString()),
+                         trailing: Text("\$:${items[index]['price']}"),
+                         subtitle: Text(items[index]['rating']),
+                       ),
+                     ),
                    );
                  }
              );
            }
-           else if(snapshot.hasError){
-             return Center(child: Text("something wrong happened"));
+           else if(items.length<1){
+             return Center(
+               child: Column(
+                 children: [
+                   SizedBox(height: 300),
+                   CircularProgressIndicator(
+
+                   ),
+                   Text("Loding Please Wait",style: TextStyle(fontSize: 24),),
+                 ],
+               ),
+             );
            }
            else{
              return Center(child: CircularProgressIndicator());
@@ -116,4 +136,17 @@ class _CartState extends State<Cart> {
       )
     );
   }
+  // Widget getbuild(BuildContext context) {
+  //   return new StreamBuilder<QuerySnapshot>(
+  //       stream: Firestore.instance.collection("expenses").snapshots,
+  //       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+  //         if (!snapshot.hasData) return new Text("There is no expense");
+  //         return new ListView(children: getExpenseItems(snapshot));
+  //       });
+  // }
+  // getExpenseItems(AsyncSnapshot<QuerySnapshot> snapshot) {
+  //   return snapshot.data.documents
+  //       .map((doc) => new ListTile(title: new Text(doc["name"]), subtitle: new Text(doc["amount"].toString())))
+  //       .toList();
+  // }
 }

@@ -43,6 +43,7 @@ class _SettingsState extends State<Settings> {
               onPressed: () {
                 final auth = FirebaseAuth.instance;
                 auth.signOut();
+                Navigator.of(context).pop();
                 // Navigator.push(context,
                 //  MaterialPageRoute(builder: (context)=>Login()),
                 // );
