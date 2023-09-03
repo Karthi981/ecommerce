@@ -1,6 +1,8 @@
-import 'package:ecommerce/Login/loginpage.dart';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
 
 import 'Cart.dart';
 import 'Constants.dart';
@@ -28,8 +30,7 @@ class Details extends StatefulWidget {
 
 class _DetailsState extends State<Details> {
 
-  late SharedPreferences logindata;
-  late bool newUser;
+
 
   // @override
   // void initState(){
@@ -116,13 +117,15 @@ class _DetailsState extends State<Details> {
                               shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                                   RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(40),
-                                  )
+                                  ),
                               )
                           ),
                           onPressed: (){
+
+                            createCart(widget.prodId,widget.image, widget.Title, widget.Price, widget.Rating);
                             Navigator.push(context,
                                 MaterialPageRoute(builder: (context)=>
-                                    Cart(widget.prodId,widget.image,widget.Price,widget.Title,widget.Rating)));
+                                    Cart()));
                           }
                       )
                   ),
@@ -167,14 +170,30 @@ class _DetailsState extends State<Details> {
       ),
     );
   }
-  // void check_if_login() async {
-  //   logindata = await SharedPreferences.getInstance();
-  //   newUser = logindata.getBool("login")?? true ;
-  //   if (newUser == false){
-  //
-  //     Navigator.push(context, MaterialPageRoute(builder: (context) => Cart()));
-  //
-  //   }
-  // }
+  Future<void> createCart(String additems,String image,String title,String price,String rating)async{
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    final uid = auth.currentUser!.uid;
+
+    final docUser = FirebaseFirestore.instance
+        .collection('users').doc(uid).collection('cart').doc(additems);
+    final aab = {
+      'image' : image,
+      'title' : title,
+      'price' : price,
+      'rating': rating
+    };
+    await docUser.set(aab);
+  }
+
+  Future<void> createList(String prodId)async{
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    final uid = auth.currentUser!.uid;
+    final docUser = FirebaseFirestore.instance.collection('users').doc(uid).collection('cart').doc('proId');
+
+    final aab = {
+      'proId': prodId
+    };
+    await docUser.set(aab);
+  }
 
 }

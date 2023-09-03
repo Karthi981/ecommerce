@@ -1,17 +1,19 @@
-import 'package:ecommerce/Cart.dart';
-import 'package:ecommerce/Home.dart';
 import 'package:ecommerce/Splash.dart';
-import 'package:ecommerce/eCom%201.dart';
-import 'package:ecommerce/youtubeplayer.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
-import 'BottomNavigation.dart';
-import 'Login/Imagetransition.dart';
-import 'Login/loginpage.dart';
 
+import 'ApiFirebase/firebasenotify.dart';
+import 'firebase_options.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  //await FirebaseApi().initialnotifications();
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {

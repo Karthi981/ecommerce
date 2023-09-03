@@ -1,9 +1,9 @@
-import 'package:ecommerce/BottomNavigation.dart';
-import 'package:ecommerce/Cart.dart';
+
 import 'package:ecommerce/Constants.dart';
 import 'package:ecommerce/Login/Imagetransition.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -14,9 +14,6 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
 
-  Bottom _checker = new Bottom();
-  late SharedPreferences logindata;
-  late bool newUser;
 
   static final _formfield = GlobalKey<FormState>();
   final usercontroller = TextEditingController();
@@ -26,7 +23,6 @@ class _LoginState extends State<Login> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    checkiflogin();
 
   }
 
@@ -92,7 +88,18 @@ class _LoginState extends State<Login> {
                          Container(
                              height: 50,
                              width: 200,
-                             child: ElevatedButton(onPressed: (){}, child: Text("Sign Up",
+                             child: ElevatedButton(onPressed: (){
+                               if(_formfield.currentState!.validate()){
+                                 signup();
+                               }
+                               else {
+                                 debugPrint('LOG: Username and password not valid');
+                                 ScaffoldMessenger.of(context).showSnackBar(
+                                     SnackBar(content: Text(" Username or password not valid"),
+                                       backgroundColor: Colors.red[300],)
+                                 );
+                               }
+                             }, child: Text("Sign Up",
                              style: TextStyle(color: Colors.white),),
 
                              style: ButtonStyle(
@@ -148,16 +155,7 @@ class _LoginState extends State<Login> {
                       padding: const EdgeInsets.all(8.0),
                       child: ElevatedButton(onPressed: (){
                         if (_formfield.currentState!.validate()) {
-                          logindata.setBool("login", false);
-                          logindata.setString("username",usercontroller.text);
-                        passcontroller.clear();
-                        usercontroller.clear();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("ok valid")));
-
-
-                        Navigator.push(context, MaterialPageRoute(builder: (context)=>Bottom()));
-
+                          login();
                       }
 
                         }, child: Text("Login",style: TextStyle(color: Colors.black),)),
@@ -171,12 +169,31 @@ class _LoginState extends State<Login> {
       ),
     );
   }
+  Future<void>login()async{
+    try{
+      final _auth = FirebaseAuth.instance;
+      _auth.signInWithEmailAndPassword(
+          email: usercontroller.text, password: passcontroller.text);
+    }on FirebaseAuthException catch (e){
+      print(e);
 
-  void checkiflogin()async {
-    logindata = await SharedPreferences.getInstance();
-    newUser = logindata.getBool("login")?? true ;
-    if (newUser == false){
-      Navigator.push(context, MaterialPageRoute(builder: (context)=>Bottom()));
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.message!),
+            backgroundColor: Colors.red[300],)
+      );
+    }
+  }
+  Future<void>signup()async{
+    try{
+      final auth = FirebaseAuth.instance;
+      auth.createUserWithEmailAndPassword(
+          email: usercontroller.text, password: passcontroller.text);
+    }on FirebaseAuthException catch (e){
+      print(e);
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.message!),
+          backgroundColor: Colors.red[300],)
+      );
     }
   }
   void dispose(){

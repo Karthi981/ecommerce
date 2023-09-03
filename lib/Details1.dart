@@ -111,7 +111,7 @@ class _Details1State extends State<Details1> {
                         onPressed: (){
                           Navigator.push(context,
                               MaterialPageRoute(builder: (context)=>
-                                  Cart(widget.id,widget.imageUrl,widget.price,widget.name,widget.oldPrice)));
+                                  Cart()));
                         }
                     )
                 ),

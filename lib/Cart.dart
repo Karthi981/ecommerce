@@ -1,25 +1,15 @@
-import 'package:carousel_slider/carousel_slider.dart';
-import 'package:ecommerce/BottomNavigation.dart';
-import 'package:ecommerce/Constants.dart';
-import 'package:ecommerce/Login/loginpage.dart';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
+
+
 
 
 class Cart extends StatefulWidget {
-  final String Title;
-  final String Price;
-  final String prodId;
-  final String image;
-  final String Rating;
 
-  Cart(
-      this.prodId,
-      this.image,
-      this.Price,
-      this.Title,
-      this.Rating
-      );
+
+  const Cart({super.key});
 
 
   @override
@@ -28,13 +18,30 @@ class Cart extends StatefulWidget {
 
 class _CartState extends State<Cart> {
 
+
+   List<String> CartId = [];
+  // Future<List<Carts>> readcart()async{
+  //   var snapshot = await FirebaseFirestore.instance.collection('cart').get();
+  //   var cart = snapshot.docs.map((e) => Carts.fromSnapshot(e)).toList();
+  //   print(cart);
+  //   return cart;
+  // }
+  Future getCartId() async {
+     await FirebaseFirestore.instance.collection('cart').get().then(
+            (snapshot) => snapshot.docs.forEach((document) {
+              print(document.reference.id);
+              CartId.add(document.reference.id);
+            }));
+  }
+
+  CollectionReference cartpoducts =FirebaseFirestore.instance.collection('cart');
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    checkiflogin();
+
   }
-   bool newUser = true;
   List lis =[
     "https://ichef.bbci.co.uk/news/976/cpsprodpb/13729/production/_112375697_1331db7a-17c0-4401-8cac-6a2309ff49b6.jpg",
     "https://image.api.playstation.com/vulcan/img/rnd/202010/2217/p3pYq0QxntZQREXRVdAzmn1w.png",
@@ -58,136 +65,55 @@ class _CartState extends State<Cart> {
 
   ];
 
-  late SharedPreferences logindata;
   @override
 
   Widget build(BuildContext context) {
-    return newUser?SafeArea(
+    return SafeArea(
       child: Scaffold(
           appBar: AppBar(
           backgroundColor: Colors.black,
                 leading: IconButton(onPressed: (){
                   Navigator.pop(context);
-                }, icon: Icon(Icons.arrow_back),color: Colors.white,),
-                title: Padding(
-                    padding: const EdgeInsets.only(left: 90),
+                }, icon: const Icon(Icons.arrow_back),color: Colors.white,),
+                title: const Padding(
+                    padding: EdgeInsets.only(left: 90),
                     child: Text("My Cart",style:TextStyle(color: Colors.white,fontSize: 20)),
                 ),
                 ),
-        body: SingleChildScrollView(
-            child: Column(
-            children: [
-            SizedBox(height: 30,),
-              Padding(
-                padding: const EdgeInsets.only(left:8),
-                child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text("2 Items:",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 18),)),
-              ),
-              SizedBox(height: 20,),
-              ListTile(
-                title: Text(widget.Title),
-                subtitle: Text(widget.Price),
-                leading: Container(
-                  height: 60,
-                  width: 80,
-                  decoration: BoxDecoration(
-                      image: DecorationImage(
-                          image: NetworkImage(widget.image),
-                          fit: BoxFit.fill
-                      )
-                  ),
-                ),
-                trailing: DropdownButton(
-                  value: dropdownvalue1,
-                  icon: const Icon(Icons.keyboard_arrow_down),
+        body: FutureBuilder(
+          future: getCartId(),
+          builder: (context,snapshot) {
+           if(snapshot.hasData){
+             return ListView.builder(
+                 itemCount: CartId.length,
+                 itemBuilder: (context,index) {
+                   return FutureBuilder(
+                     future: cartpoducts.doc('${CartId[index]}').get(),
+                     builder: (context, snapshot) {
+                       if (snapshot.connectionState == ConnectionState.done) {
+                         Map<String, dynamic>data =
+                         snapshot.data!.data() as Map<String, dynamic>;
+                         return
+                           ListTile(
+                             title: Text(data['title']),
+                           );
+                       }
+                       return Text('Loading');
+                     },
+                   );
+                 }
+             );
+           }
+           else if(snapshot.hasError){
+             return Center(child: Text("something wrong happened"));
+           }
+           else{
+             return Center(child: CircularProgressIndicator());
+           }
+          }
+        ),
 
-                  items: nums1.map((String items) {
-                    return DropdownMenuItem(
-                      value: items,
-                      child: Text(items),
-                    );
-                  }).toList(),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      dropdownvalue1 = newValue!;
-                    });
-                  },
-                ),
-              ),
-              SizedBox(height: 20,),
-              ListTile(
-                title: Text("ASUS A15 2023"),
-                subtitle: Text("\$1200"),
-                leading: Container(
-                  height: 60,
-                  width: 80,
-                  decoration: BoxDecoration(
-                      image: DecorationImage(
-                          image: NetworkImage("https://m.media-amazon.com/images/I/91zVSkGGZbS.jpg"),
-                          fit: BoxFit.fill
-                      )
-                  ),
-                ),
-                trailing: DropdownButton(
-                  value: dropdownvalue1,
-                  icon: const Icon(Icons.keyboard_arrow_down),
-
-                  items: nums1.map((String items) {
-                    return DropdownMenuItem(
-                      value: items,
-                      child: Text(items),
-                    );
-                  }).toList(),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      dropdownvalue1 = newValue!;
-                    });
-                  },
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text("More Reccommendations",style: Heading,)),
-              ),
-              CarouselSlider.builder(
-                  options: CarouselOptions(
-                    height: 450,
-                    aspectRatio: 16/9,
-                    viewportFraction: 1,
-                    initialPage: 0,
-                    enableInfiniteScroll: true,
-                    reverse: false,
-                    autoPlay: true,
-                    autoPlayInterval: const Duration(seconds: 3),
-                    autoPlayAnimationDuration: const Duration(milliseconds: 800),
-                    autoPlayCurve: Curves.fastOutSlowIn,
-                    scrollDirection: Axis.horizontal,
-                  ),
-                  itemCount: lis.length,
-                  itemBuilder: (BuildContext context, index, int pageViewIndex)
-                  {
-                    return Container(
-                      decoration: BoxDecoration(
-                          shape: BoxShape.rectangle,
-                          image: DecorationImage(
-                            fit: BoxFit.fill,
-                            image: NetworkImage(lis[index]),
-                          )
-                      ),
-                    );
-                  }
-              ),
-      ],
-      ),
-      ),
-      ),
-    ):Login();
-  }
-  void checkiflogin()async {
-    logindata = await SharedPreferences.getInstance();
-    newUser = logindata.getBool("login")?? true ;
+      )
+    );
   }
 }

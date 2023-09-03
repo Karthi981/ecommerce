@@ -1,10 +1,10 @@
 import 'package:animated_splash_screen/animated_splash_screen.dart';
-import 'package:ecommerce/Home.dart';
+import 'package:ecommerce/BottomNavigation.dart';
 import 'package:ecommerce/Login/loginpage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
-import 'BottomNavigation.dart';
 
 class Splash extends StatefulWidget {
   const Splash({Key? key}) : super(key: key);
@@ -54,7 +54,18 @@ class _SplashState extends State<Splash> {
           ],
         ),
       ),
-      nextScreen: const Bottom(),
+      nextScreen: StreamBuilder<User?>(
+        stream:FirebaseAuth.instance.authStateChanges() ,
+        builder: (context,AsyncSnapshot<User?> snapshot){
+          if(snapshot.hasData && snapshot.data !=null){
+            return const Bottom();
+          }
+          else if(snapshot.connectionState == ConnectionState.waiting){
+            return Center(child: CircularProgressIndicator());
+          }
+          return Login();
+        },
+      ),
       splashTransition: SplashTransition.fadeTransition,
     );
   }

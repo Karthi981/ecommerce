@@ -8,7 +8,6 @@ import 'package:ecommerce/eCom%201.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
-import 'package:wifi_iot/wifi_iot.dart';
 
 
 class Bottom extends StatefulWidget {

@@ -1,6 +1,7 @@
-import 'package:ecommerce/Login/loginpage.dart';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
 
 import 'Constants.dart';
 
@@ -16,17 +17,12 @@ class Settings extends StatefulWidget {
 class _SettingsState extends State<Settings> {
 
 
-  late SharedPreferences logindata;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    initial();
   }
 
-  void initial() async {
-    logindata= await SharedPreferences.getInstance();
-  }
 
   void _showAlertDialog() {
     showDialog(
@@ -39,17 +35,17 @@ class _SettingsState extends State<Settings> {
           actions: [
             TextButton(
               onPressed: () {
-                logindata.setBool("login",false);
                 Navigator.of(context).pop();
               },
               child: Text('No'),
             ),
             TextButton(
               onPressed: () {
-                logindata.setBool("login",true);
-                Navigator.push(context,
-                 MaterialPageRoute(builder: (context)=>Login()),
-                );
+                final auth = FirebaseAuth.instance;
+                auth.signOut();
+                // Navigator.push(context,
+                //  MaterialPageRoute(builder: (context)=>Login()),
+                // );
               },
               child: Text('Yes'),
             ),

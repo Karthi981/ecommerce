@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 
 
@@ -19,8 +18,6 @@ class Imageview extends StatefulWidget {
 }
 
 class _ImageviewState extends State<Imageview> {
-  late SharedPreferences logindata;
-  late bool newUser;
 
   final List<String> imgList =[
     'https://m.media-amazon.com/images/I/51jIFfkaDTS._AC_UF894,1000_QL80_DpWeblab_.jpg',
