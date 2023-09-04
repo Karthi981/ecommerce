@@ -10,7 +10,7 @@ class FirebaseApi {
   Future<void> initialnotifications()async{
     await _message.requestPermission();
     final _devicetoken = await  _message.getToken();
-
+    //createtoken(_devicetoken!);
     // documentReference.update({
     //   'fcmtoken': _devicetoken.toString(),
     // });
@@ -19,8 +19,7 @@ class FirebaseApi {
   }
 
   Future<void> createtoken(String token)async{
-    final docUser = FirebaseFirestore.instance.collection('users').doc(uid)
-        .collection('token').doc('token');
+    final docUser = FirebaseFirestore.instance.collection('users').doc(uid);
     final json = {
       'fcmtoken' : token
     };

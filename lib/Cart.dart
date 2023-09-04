@@ -1,4 +1,6 @@
 
+import 'dart:js_util';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +22,7 @@ class Cart extends StatefulWidget {
 class _CartState extends State<Cart> {
   final String uid = FirebaseAuth.instance.currentUser!.uid;
   List<Map<String,dynamic>> items =[];
-
+  List cartproId =[];
 
   // Future<List<Carts>> readcart()async{
   //   var snapshot = await FirebaseFirestore.instance.collection('cart').get();
@@ -31,6 +33,8 @@ class _CartState extends State<Cart> {
   Future getCartId() async {
     List<Map<String,dynamic>> tempList =[];
      var data =await FirebaseFirestore.instance.collection('users').doc(uid).collection('cart').get();
+     cartproId.add(data);
+     print(cartproId[1]);
      data.docs.forEach((element) {
        tempList.add(element.data());
      });
