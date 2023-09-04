@@ -1,4 +1,6 @@
 
+
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -29,7 +31,6 @@ class Details extends StatefulWidget {
 }
 
 class _DetailsState extends State<Details> {
-
 
 
   // @override
@@ -169,8 +170,9 @@ class _DetailsState extends State<Details> {
 
       ),
     );
-  }
-  Future<void> createCart(String additems,String image,String title,String price,String rating)async{
+
+}
+   createCart(String additems,String image,String title,String price,String rating)async{
     final FirebaseAuth auth = FirebaseAuth.instance;
     final uid = auth.currentUser!.uid;
 
@@ -184,16 +186,4 @@ class _DetailsState extends State<Details> {
     };
     await docUser.set(json);
   }
-
-  Future<void> createList(String prodId)async{
-    final FirebaseAuth auth = FirebaseAuth.instance;
-    final uid = auth.currentUser!.uid;
-    final docUser = FirebaseFirestore.instance.collection('users').doc(uid).collection('cart').doc('proId');
-
-    final json = {
-      'proId': prodId
-    };
-    await docUser.set(json);
-  }
-
 }

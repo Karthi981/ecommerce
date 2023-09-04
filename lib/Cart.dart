@@ -1,5 +1,5 @@
 
-import 'dart:js_util';
+
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -98,7 +98,7 @@ class _CartState extends State<Cart> {
         body: FutureBuilder(
           future: getCartId(),
           builder: (context,snapshot) {
-           if(items.length>0){
+           if(items.isNotEmpty){
              return ListView.builder(
                  itemCount: items.length,
                  itemBuilder: (context,index) {
@@ -169,7 +169,7 @@ class _CartState extends State<Cart> {
                  }
              );
            }
-           else if(items.length<1){
+           else if(items.isEmpty){
              return Center(
                child: Column(
                  children: [
