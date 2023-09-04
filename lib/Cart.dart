@@ -103,28 +103,46 @@ class _CartState extends State<Cart> {
                  itemCount: items.length,
                  itemBuilder: (context,index) {
                    return
-                     Dismissible(
-                       // Each Dismissible must contain a Key. Keys allow Flutter to
-                       // uniquely identify widgets.
-                       key: Key(items[index]['title']),
-                       // Provide a function that tells the app
-                       // what to do after an item has been swiped away.
-                       onDismissed: (direction) {
-                         // Remove the item from the data source.
-                         setState(() {
+                     Padding(
+                       padding: const EdgeInsets.all(8.0),
+                       child: Dismissible(
+                         // Each Dismissible must contain a Key. Keys allow Flutter to
+                         // uniquely identify widgets.
+                         key: Key(items[index]['title']),
+                         // Provide a function that tells the app
+                         // what to do after an item has been swiped away.
+                         onDismissed: (direction) {
                            FirebaseFirestore.instance.collection('users').doc(uid).collection('cart').doc(cartproId[index]).delete();
-                           items.removeAt(index);
+                           // Remove the item from the data source.
+                           setState(() {
 
-                         });
+                             items.removeAt(index);
 
-                         // Then show a snackbar.
-                         ScaffoldMessenger.of(context)
-                             .showSnackBar(SnackBar(content: Text('${items[index]['title']} dismissed')));
-                       },
-                       // Show a red background as the item is swiped away.
-                       background: Container(color: Colors.red),
-                       child: ListTile(
-                         title: Text(items[index]['title']),
+                           });
+
+                           // Then show a snackbar.
+                           ScaffoldMessenger.of(context)
+                               .showSnackBar(SnackBar(content: Text('${items[index]['title']} dismissed')));
+                         },
+                         // Show a red background as the item is swiped away.
+                         background: Container(color: Colors.red),
+                         child: Container(
+                           height: 80,
+                           child: ListTile(
+                             title: Text(items[index]['title']),
+                             leading: Container(
+                               height: 50,
+                               width: 50,
+                               decoration: BoxDecoration(
+                                   shape: BoxShape.rectangle,
+                                   image: DecorationImage(image: NetworkImage(items[index]['image']))
+                               ),
+                             ),
+                             // leading: Text(items[index]['image'].toString()),
+                             trailing: Text("\$:${items[index]['price']}"),
+                             subtitle: Text(items[index]['rating']),
+                           ),
+                         ),
                        ),
                      );
 

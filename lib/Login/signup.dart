@@ -5,14 +5,14 @@ import 'package:flutter/material.dart';
 
 
 
-class Signup extends StatefulWidget {
-  const Signup({Key? key}) : super(key: key);
+class Editprofile extends StatefulWidget {
+  const Editprofile({Key? key}) : super(key: key);
 
   @override
-  State<Signup> createState() => _SignupState();
+  State<Editprofile> createState() => _EditprofileState();
 }
 
-class _SignupState extends State<Signup> {
+class _EditprofileState extends State<Editprofile> {
 
   TextEditingController txtlog =new TextEditingController();
   TextEditingController txtname =new TextEditingController();
@@ -254,8 +254,8 @@ class _SignupState extends State<Signup> {
             backgroundColor: Colors.red[300],)
       );
     }
-
     final uid = FirebaseAuth.instance.currentUser!.uid;
+    // final adduid=FirebaseFirestore.instance.collection('users').doc(uid);
     final adddata=FirebaseFirestore.instance.collection('users').doc(uid);
     final json={
       "name":name,
@@ -263,7 +263,7 @@ class _SignupState extends State<Signup> {
       "monilenum":phonenum,
       "password":password
     };
-    await adddata.set(json);
-    Navigator.push(context, MaterialPageRoute(builder: (context)=>Bottom()));
+    // await adddata.set(json);
+    // Navigator.push(context, MaterialPageRoute(builder: (context)=>Bottom()));
   }
 }

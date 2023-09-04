@@ -1,7 +1,6 @@
 
 import 'package:ecommerce/Constants.dart';
 import 'package:ecommerce/Login/Imagetransition.dart';
-import 'package:ecommerce/Login/signup.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -15,7 +14,7 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
 
-
+  var clk = true;
   static final _formfield = GlobalKey<FormState>();
   final usercontroller = TextEditingController();
   final passcontroller = TextEditingController();
@@ -86,28 +85,7 @@ class _LoginState extends State<Login> {
                     key: _formfield,
                     child: Column(
                        children: [
-                         Container(
-                             height: 50,
-                             width: 200,
-                             child: ElevatedButton(onPressed: (){
 
-                               Navigator.push(context, MaterialPageRoute(builder: (context)=>Signup()));
-    // if(_formfield.currentState!.validate()){
-    // }
-    // else {
-    //   debugPrint('LOG: Username and password not valid');
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //       SnackBar(content: Text(" Username or password not valid"),
-    //         backgroundColor: Colors.red[300],)
-    //   );
-    // }
-                             }, child: Text("Sign Up",
-                             style: TextStyle(color: Colors.white),),
-
-                             style: ButtonStyle(
-                               backgroundColor: MaterialStateProperty.all(Colors.blue[700]),
-                             ),
-                             )),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: TextFormField(
@@ -153,14 +131,60 @@ class _LoginState extends State<Login> {
                         ),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ElevatedButton(onPressed: (){
-                        if (_formfield.currentState!.validate()) {
-                          login();
-                      }
+                    Row(
+                      children: [
+                        SizedBox(width: 50,),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ElevatedButton(onPressed: (){
+                            if (_formfield.currentState!.validate()) {
+                              setState(() {
+                                if(clk){
+                                  login();
+                                  clk=false;
+                                }
+                                else{
+                                  clk=true;
+                                  signup();
+                                }
+                              });
 
-                        }, child: Text("Login",style: TextStyle(color: Colors.black),)),
+                          }
+
+                            }, child: clk? Text("Login",style:
+                          TextStyle(color: Colors.black)):Text("Sign Up",style: TextStyle(color: Colors.black),),
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all(Colors.cyan)
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: TextButton(onPressed: (){
+                            setState(() {
+                              if(clk){
+                                clk=false;
+                              }
+                              else{
+                                clk=true;
+                              }
+                            });
+                            // Navigator.push(context, MaterialPageRoute(builder: (context)=>Editprofile()));
+                            // if(_formfield.currentState!.validate()){
+                            // }
+                            // else {
+                            //   debugPrint('LOG: Username and password not valid');
+                            //   ScaffoldMessenger.of(context).showSnackBar(
+                            //       SnackBar(content: Text(" Username or password not valid"),
+                            //         backgroundColor: Colors.red[300],)
+                            //   );
+                            // }
+                          }, child: clk? Text("Sign Up?",
+                            style: TextStyle(color: Colors.blue),):Text("Already Have\n an Account?",
+                              style: TextStyle(color: Colors.blue)),
+                          ),
+                        ),
+                      ],
                     ),
                 ],
               ),
@@ -185,19 +209,19 @@ class _LoginState extends State<Login> {
       );
     }
   }
-  // Future<void>signup()async{
-  //   try{
-  //     final auth = FirebaseAuth.instance;
-  //     auth.createUserWithEmailAndPassword(
-  //         email: usercontroller.text, password: passcontroller.text);
-  //   }on FirebaseAuthException catch (e){
-  //     print(e);
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //         SnackBar(content: Text(e.message!),
-  //         backgroundColor: Colors.red[300],)
-  //     );
-  //   }
-  // }
+  Future<void>signup()async{
+    try{
+      final auth = FirebaseAuth.instance;
+      auth.createUserWithEmailAndPassword(
+          email: usercontroller.text, password: passcontroller.text);
+    }on FirebaseAuthException catch (e){
+      print(e);
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.message!),
+          backgroundColor: Colors.red[300],)
+      );
+    }
+  }
   void dispose(){
     usercontroller.dispose();
     passcontroller.dispose();
