@@ -33,15 +33,21 @@ class _CartState extends State<Cart> {
   Future getCartId() async {
     List<Map<String,dynamic>> tempList =[];
      var data =await FirebaseFirestore.instance.collection('users').doc(uid).collection('cart').get();
-     cartproId.add(data);
-     print(cartproId[1]);
+     await FirebaseFirestore.instance.collection('users').doc(uid).collection('cart').get()
+         .then((snapshot) =>snapshot.docs.forEach((element) {
+           cartproId.add(element.reference.id);
+           //print(element.reference.id);
+     }) );
+
+     // cartproId.add(data);
+     // print(cartproId[1]);
      data.docs.forEach((element) {
        tempList.add(element.data());
      });
      setState(() {
        items=tempList;
      });
-     print(items[0]);
+     //print(items[0]);
   }
 
 
@@ -106,7 +112,7 @@ class _CartState extends State<Cart> {
                        onDismissed: (direction) {
                          // Remove the item from the data source.
                          setState(() {
-                           FirebaseFirestore.instance.collection('users').doc(uid).collection('cart').doc('1').delete();
+                           FirebaseFirestore.instance.collection('users').doc(uid).collection('cart').doc(cartproId[index]).delete();
                            items.removeAt(index);
 
                          });

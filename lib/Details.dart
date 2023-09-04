@@ -176,13 +176,13 @@ class _DetailsState extends State<Details> {
 
     final docUser = FirebaseFirestore.instance
         .collection('users').doc(uid).collection('cart').doc(additems);
-    final aab = {
+    final json = {
       'image' : image,
       'title' : title,
       'price' : price,
       'rating': rating
     };
-    await docUser.set(aab);
+    await docUser.set(json);
   }
 
   Future<void> createList(String prodId)async{
@@ -190,10 +190,10 @@ class _DetailsState extends State<Details> {
     final uid = auth.currentUser!.uid;
     final docUser = FirebaseFirestore.instance.collection('users').doc(uid).collection('cart').doc('proId');
 
-    final aab = {
+    final json = {
       'proId': prodId
     };
-    await docUser.set(aab);
+    await docUser.set(json);
   }
 
 }

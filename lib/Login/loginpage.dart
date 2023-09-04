@@ -1,6 +1,7 @@
 
 import 'package:ecommerce/Constants.dart';
 import 'package:ecommerce/Login/Imagetransition.dart';
+import 'package:ecommerce/Login/signup.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -89,16 +90,17 @@ class _LoginState extends State<Login> {
                              height: 50,
                              width: 200,
                              child: ElevatedButton(onPressed: (){
-                               if(_formfield.currentState!.validate()){
-                                 signup();
-                               }
-                               else {
-                                 debugPrint('LOG: Username and password not valid');
-                                 ScaffoldMessenger.of(context).showSnackBar(
-                                     SnackBar(content: Text(" Username or password not valid"),
-                                       backgroundColor: Colors.red[300],)
-                                 );
-                               }
+
+                               Navigator.push(context, MaterialPageRoute(builder: (context)=>Signup()));
+    // if(_formfield.currentState!.validate()){
+    // }
+    // else {
+    //   debugPrint('LOG: Username and password not valid');
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //       SnackBar(content: Text(" Username or password not valid"),
+    //         backgroundColor: Colors.red[300],)
+    //   );
+    // }
                              }, child: Text("Sign Up",
                              style: TextStyle(color: Colors.white),),
 
@@ -183,19 +185,19 @@ class _LoginState extends State<Login> {
       );
     }
   }
-  Future<void>signup()async{
-    try{
-      final auth = FirebaseAuth.instance;
-      auth.createUserWithEmailAndPassword(
-          email: usercontroller.text, password: passcontroller.text);
-    }on FirebaseAuthException catch (e){
-      print(e);
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.message!),
-          backgroundColor: Colors.red[300],)
-      );
-    }
-  }
+  // Future<void>signup()async{
+  //   try{
+  //     final auth = FirebaseAuth.instance;
+  //     auth.createUserWithEmailAndPassword(
+  //         email: usercontroller.text, password: passcontroller.text);
+  //   }on FirebaseAuthException catch (e){
+  //     print(e);
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(content: Text(e.message!),
+  //         backgroundColor: Colors.red[300],)
+  //     );
+  //   }
+  // }
   void dispose(){
     usercontroller.dispose();
     passcontroller.dispose();
