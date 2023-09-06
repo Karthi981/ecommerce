@@ -122,7 +122,9 @@ class _CartState extends State<Cart> {
 
                            // Then show a snackbar.
                            ScaffoldMessenger.of(context)
-                               .showSnackBar(SnackBar(content: Text('${items[index]['title']} dismissed')));
+                               .showSnackBar(SnackBar(
+                               content: Text('${items[index]['title']} dismissed'),
+                           backgroundColor: Colors.red[300],));
                          },
                          // Show a red background as the item is swiped away.
                          background: Container(color: Colors.red),

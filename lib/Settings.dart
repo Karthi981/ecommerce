@@ -1,4 +1,5 @@
 
+import 'package:ecommerce/ApiFirebase/add_%20products_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -98,7 +99,10 @@ class _SettingsState extends State<Settings> {
                     shape: BoxShape.rectangle,
                     borderRadius: BorderRadius.circular(30),
                   ),
-                  child: ElevatedButton(onPressed: (){}, child: Text("Edit Profile",style: SubHeading,),
+                  child: ElevatedButton(onPressed: (){
+
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>Addproducts()));
+                  }, child: Text("Edit Products",style: SubHeading,),
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all(Colors.yellow),
                   ),

@@ -1,15 +1,18 @@
 
 
 
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-
+import 'package:http/http.dart' as http;
 import 'Cart.dart';
 import 'Constants.dart';
 
 class Details extends StatefulWidget {
+
 
   final String Title;
   final String Price;
@@ -38,6 +41,21 @@ class _DetailsState extends State<Details> {
   //   super.initState();
   //   check_if_login();
   // }
+  Future<http.Response> adddetails(String name,String descripion,String price,String imageUrl)async{
+    return http.post(Uri.parse("https://localhost:7146/ProductList/INSERTProductdetails"),
+    headers: <String , String>{
+        'Content-Type' : 'application/json; charset=utf-8',
+        },
+       body:jsonEncode(<String , String>{
+
+           "name": name,
+           "descripion": descripion,
+           "price": price,
+           "imageUrl": imageUrl
+         }
+       ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -122,7 +140,7 @@ class _DetailsState extends State<Details> {
                               )
                           ),
                           onPressed: (){
-
+                            adddetails(widget.Title.toString(), widget.Description.toString(), widget.Price.toString(), widget.image.toString());
                             createCart(widget.prodId,widget.image, widget.Title, widget.Price, widget.Rating);
                             Navigator.push(context,
                                 MaterialPageRoute(builder: (context)=>
@@ -172,7 +190,7 @@ class _DetailsState extends State<Details> {
     );
 
 }
-   createCart(String additems,String image,String title,String price,String rating)async{
+   Future<void>createCart(String additems,String image,String title,String price,String rating)async{
     final FirebaseAuth auth = FirebaseAuth.instance;
     final uid = auth.currentUser!.uid;
 
